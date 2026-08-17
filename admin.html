@@ -1,0 +1,17 @@
+<!doctype html>
+<html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>THAI LE ADMIN</title>
+<style>
+body{margin:0;background:#050811;color:#fff;font-family:Arial;padding:20px}.wrap{max-width:700px;margin:auto}.card{background:#0c1422;border:1px solid #20304a;border-radius:20px;padding:16px;margin:12px 0}h1{background:linear-gradient(90deg,#fff,#70a1ff,#b56cff);-webkit-background-clip:text;color:transparent}input,select,button{width:100%;padding:13px;margin-top:9px;border-radius:12px;border:1px solid #2b3c59;background:#070d16;color:#fff;box-sizing:border-box}button{background:linear-gradient(135deg,#4d83ff,#9a52ff);border:0;font-weight:900}.key{display:flex;justify-content:space-between;gap:8px;align-items:center;border:1px solid #1d2c43;padding:12px;border-radius:13px;margin-top:8px}.key button{width:auto;padding:8px 10px;margin:0}.muted{color:#7887a0;font-size:10px}
+</style></head><body><div class="wrap"><h1>THAI LE ADMIN</h1><div class="muted">Tạo key cho THAI LE V8</div>
+<div class="card"><h3>🔑 Tạo key</h3><input id="prefix" value="THAI"><select id="days"><option value="1">1 ngày</option><option value="7">7 ngày</option><option value="30">30 ngày</option><option value="365">365 ngày</option><option value="0">Vĩnh viễn</option></select><button id="create">✨ TẠO KEY</button></div>
+<div class="card"><h3>📋 Danh sách key</h3><div id="list"></div></div></div>
+<script>
+const DB="THAILE_KEYS_V8";
+function keys(){try{return JSON.parse(localStorage.getItem(DB)||"[]")}catch(e){return[]}}
+function save(x){localStorage.setItem(DB,JSON.stringify(x))}
+function rand(n){const a="ABCDEFGHJKLMNPQRSTUVWXYZ23456789",r=[];for(let i=0;i<n;i++)r.push(a[Math.floor(Math.random()*a.length)]);return r.join("")}
+function render(){const a=keys();document.getElementById("list").innerHTML=a.length?a.map((k,i)=>`<div class="key"><div><b>${k.code}</b><div class="muted">${k.status} • ${k.expiresAt?new Date(k.expiresAt).toLocaleString():"Vĩnh viễn"}</div></div><button onclick="toggle(${i})">${k.status==="active"?"Khóa":"Mở"}</button></div>`).join(""):"<div class='muted'>Chưa có key</div>"}
+document.getElementById("create").onclick=()=>{const p=document.getElementById("prefix").value.trim().toUpperCase()||"THAI",d=+document.getElementById("days").value;const exp=d?new Date(Date.now()+d*86400000).toISOString():null;const a=keys();a.push({code:`${p}-${rand(4)}-${rand(4)}-${rand(4)}`,status:"active",expiresAt:exp,createdAt:new Date().toISOString()});save(a);render()}
+function toggle(i){const a=keys();a[i].status=a[i].status==="active"?"blocked":"active";save(a);render()}
+render();
+</script></body></html>
